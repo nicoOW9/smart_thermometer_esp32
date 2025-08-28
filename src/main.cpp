@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "display_driver.h"
 #include "thermistor_driver.h"
+#include "wifi_driver.h"
 
 void setup() {
     Serial.begin(115200);
@@ -12,10 +13,17 @@ void setup() {
     pinMode(PIN_ANALOG_IN, INPUT);
 
     Serial.println("Thermistor Test");
+    int connection_status=init_wifi();
+    Serial.printf("WiFi connection status: %d\n", connection_status);
 }
 
 void loop() {
-    // Read temperature
+    
+if (WiFi.status() != WL_CONNECTED) {
+        Serial.println("Wi-Fi lost, reconnecting...");
+        init_wifi();
+    }
+    // Read temperature 
     float tempC = readTemperature();
     Serial.printf("Temperature: %.2f C\n", tempC / 10);
 
