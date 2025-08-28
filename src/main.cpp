@@ -2,6 +2,8 @@
 #include "display_driver.h"
 #include "thermistor_driver.h"
 #include "wifi_driver.h"
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 void setup() {
     Serial.begin(115200);
@@ -23,6 +25,8 @@ if (WiFi.status() != WL_CONNECTED) {
         Serial.println("Wi-Fi lost, reconnecting...");
         init_wifi();
     }
+    float outside_temp=getOutsideTemperature();
+    Serial.printf("Outside Temperature: %.2f C\n", outside_temp);
     // Read temperature 
     float tempC = readTemperature();
     Serial.printf("Temperature: %.2f C\n", tempC / 10);
@@ -32,7 +36,7 @@ if (WiFi.status() != WL_CONNECTED) {
     Serial.printf("Digits: %d,%d,%d,%d\n", digits[0], digits[1], digits[2], digits[3]);
 
     // Display digits with simple multiplexing
-    for (int _i = 0; _i < 1000; _i++) {
+    for (int _i = 0; _i < 10000; _i++) {
         writeDigit(digits[0]);
         selectDigit(0);
         delay(DIGIT_REFRESH_DELAY_MS);

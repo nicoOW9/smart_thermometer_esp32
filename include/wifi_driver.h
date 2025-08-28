@@ -8,4 +8,5 @@
 // WiFi network credentials
 
 int init_wifi();
+float getOutsideTemperature();
 #endif

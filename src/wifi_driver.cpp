@@ -2,7 +2,8 @@
 #include <WiFi.h>
 #include <Arduino.h>
 #include "secrets.h"
-
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
 
 
 int init_wifi(){
@@ -31,4 +32,28 @@ int init_wifi(){
         return 1;
     }
 
+}
+
+float getOutsideTemperature() {
+    if (WiFi.status() != WL_CONNECTED) return NAN;
+
+    HTTPClient http;
+    String url = String("http://api.weatherapi.com/v1/current.json?key=") +WEATHER_API_KEY+"&q="+ lattitude +"," + Longitude;
+
+    http.begin(url);
+    int httpCode = http.GET();
+
+    float temp_c = NAN;
+
+    if (httpCode == 200) {
+        String payload = http.getString();
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, payload);
+        temp_c = doc["current"]["temp_c"];   // °C
+    } else {
+        Serial.printf("HTTP GET failed, code: %d\n", httpCode);
+    }
+
+    http.end();
+    return temp_c;
 }
