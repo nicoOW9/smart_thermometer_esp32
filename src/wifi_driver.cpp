@@ -51,8 +51,8 @@ float getOutsideTemperature() {
         DynamicJsonDocument doc(1024);
         deserializeJson(doc, payload);
         temp_c = doc["current"]["temp_c"];   // °C
-        int precipitation= doc["current"]["precip_mm"]; // mm
-        Serial.printf("Precipitation: %d mm\n", precipitation);
+        float precipitation= doc["current"]["precip_mm"]; // mm
+        Serial.printf("Precipitation: %.3f mm\n", precipitation);
         if(precipitation>0){
             Serial.println("It's raining outside!");
             digitalWrite(18,HIGH);
