@@ -12,6 +12,7 @@ int init_wifi(){
     const char* wifi_password=WIFI_PASSWORD;
     const int wifi_waittime=WIFI_WAITTIME;
     pinMode(wifidebugpin, OUTPUT);
+    pinMode(18,OUTPUT);
     digitalWrite(wifidebugpin, LOW);  
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -50,6 +51,15 @@ float getOutsideTemperature() {
         DynamicJsonDocument doc(1024);
         deserializeJson(doc, payload);
         temp_c = doc["current"]["temp_c"];   // °C
+        int precipitation= doc["current"]["precip_mm"]; // mm
+        Serial.printf("Precipitation: %d mm\n", precipitation);
+        if(precipitation>0){
+            Serial.println("It's raining outside!");
+            digitalWrite(18,HIGH);
+        }
+        else{
+            digitalWrite(18,LOW);
+        }
     } else {
         Serial.printf("HTTP GET failed, code: %d\n", httpCode);
     }
@@ -57,3 +67,4 @@ float getOutsideTemperature() {
     http.end();
     return temp_c;
 }
+
